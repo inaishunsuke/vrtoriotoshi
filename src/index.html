@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>VRとりおとし</title>
+    <meta name="description" content="VRとりおとし">
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script type="text/javascript">
+    window.addEventListener('load', function() {
+      var box = document.querySelector("#box");
+
+      box.addEventListener("click", function() { // クリック時のイベント
+        var color = (Math.random() * 0xFFFFFF | 0).toString(16); // ランダムな色コードを生成
+        color = "#" + ("000000" + color).slice(-6); // 6桁に整形
+        box.setAttribute('material', 'color: ' + color); // boxの色変更
+
+      }, false);
+      box.addEventListener('mouseenter', function () {
+        box.setAttribute('scale', {x: 5, y: 5, z: 5});
+      });
+
+      // カーソルが離れたら元にもどす
+      box.addEventListener('mouseleave', function () {
+        box.setAttribute('scale', {x: 2, y: 2, z: 2});
+      });
+
+      var camera = document.querySelector("#cam");
+//      camera.setAttribute("position", "0 2 4");
+
+      var t = 0;
+      function render() {
+        t += 0.01;
+        requestAnimationFrame(render);
+//        box.setAttribute('position', '3 '+(Math.sin(t*2)+1)+' 0');
+        box.setAttribute('rotation', '3 '+t*360+' 45');
+      }
+      render();
+    });
+    </script>
+  </head>
+  <body>
+    <a-scene antialias="true">
+      <a-assets>
+        <img id="wall" src="./images/toriotoshi-icon.jpg"></img>
+        <img id="floor" src="./images/tile_0169.jpg"></img>
+        <img id="sky" src="./images/e_3-600x400.jpg"></img>
+        <img id="gameboardTexture" src="./images/gameboard.jpg"></img>
+        <img id="icon-sheep" src="./images/icon-sheep.jpg"></img>
+        <img id="icon-momon" src="./images/icon-momon.jpg"></img>
+        <img id="icon-chick" src="./images/icon-chick.jpg"></img>
+        <img id="icon-penguin" src="./images/icon-penguin.jpg"></img>
+        <img id="instructioncard" src="./images/instructioncard.jpg"></img>
+        <img id="instructioncard-hitstone" src="./images/instructioncard-hitstone.jpg"></img>
+        <img id="instructioncard-copy" src="./images/instructioncard-copy.jpg"></img>
+        <img id="instructioncard-moveleft2" src="./images/instructioncard-moveleft2.jpg"></img>
+      </a-assets>
+
+      <!--<a-plane width="2" height="2" material="shader:html;target: #target1;" rotation="-90 0 0" position="0 1 -3"></a-plane>-->
+      <a-entity id="cam" position="0 2 2">
+        <a-camera id="camera">
+          <a-cursor color="#FAFAFA"><a-animation
+						 begin="mouseenter"
+						 easing="ease-out"
+						 attribute="scale"
+						 fill="forwards"
+						 from="2 2 2"
+						 to="1 1 1"
+						 dur="300">
+			</a-animation>
+			<a-animation
+						 begin="mouseenter"
+						 attribute="color"
+						 fill="forwards"
+						 from="black"
+						 to="red"
+						 dur="0">
+			</a-animation>
+			<a-animation
+						 begin="mouseleave"
+						 easing="ease-in"
+						 attribute="scale"
+						 fill="forwards"
+						 from="1 1 1"
+						 to="2 2 2"
+						 dur="300">
+			</a-animation>
+			<a-animation
+						 begin="mouseleave"
+						 attribute="color"
+						 fill="forwards"
+						 from="red"
+						 to="black"
+						 dur="0">
+			</a-animation></a-cursor>
+          <a-entity id="instructioncardArea">
+            <a-plane src="#instructioncard" color="#CCC" height="1.5" width="1" position="-2 1 -3" rotation="0 0 0"></a-plane><!-- 指示カード領域 -->
+          </a-entity>
+        </a-camera>
+
+        <a-entity laser-controls="hand: right" line="color: red;"></a-entity><!-- コントローラの線を表示 -->
+      </a-entity>
+
+      <a-entity  position="0 0 0">
+        <a-sky color="#9999FF" src="#sky"></a-sky><!-- 背景 -->
+        <a-plane src="#floor" repeat="20 20" color="#CCC" height="20" width="20" position="0 0 0" rotation="-90 0 0"></a-plane><!-- 床 -->
+        <a-plane src="#wall" repeat="10 10" color="#CCC" height="20" width="20" position="10 10 0" rotation="0 270 0"></a-plane><!-- 右壁 -->
+        <a-plane src="#wall" repeat="10 10" color="#CCC" height="20" width="20" position="-10 10 0" rotation="0 90 0"></a-plane><!-- 左壁 -->
+        <a-plane src="#wall" repeat="10 10" color="#CCC" height="20" width="20" position="0 10 -10" rotation="0 0 0"></a-plane><!-- 奥壁 -->
+
+        <a-entity>
+          <a-text value="To Ri O To Shi!!" align="center" color="white" position="0 2 -2" scale="2 2 2"></a-text>
+        </a-entity>
+        <a-entity position="0 0 0">
+          <a-box color="gray" depth="2" height="0.1" width="3" position="0 1 0" rotation="0 0 0"
+           material="color: #CE6E39; roughness: 0.8; metalness: 0.8;" shadow></a-box><!-- 机 -->
+          <a-cylinder color="gray" height="1" radius="0.05" position="-1.4 0.5 0.9"></a-cylinder>
+          <a-cylinder color="gray" height="1" radius="0.05" position="1.4 0.5 0.9"></a-cylinder>
+          <a-cylinder color="gray" height="1" radius="0.05" position="-1.4 0.5 -0.9"></a-cylinder>
+          <a-cylinder color="gray" height="1" radius="0.05" position="1.4 0.5 -0.9"></a-cylinder>
+        </a-entity>
+        <a-entity id="gameboard" position="0 1.1 0" rotation="-90 0 0">
+          <a-plane src="#gameboardTexture" color="gray" height="1.5" width="2.5"
+           material="color: #4F86C6;" ></a-plane><!-- ゲームボード -->
+           <a-circle src="#icon-sheep" radius="0.1" position="-0.5 0.5 0.01"></a-circle>
+           <a-circle src="#icon-momon" radius="0.1" position="0.5 0.5 0.01"></a-circle>
+           <a-circle src="#icon-chick" radius="0.1" position="0.5 -0.5 0.01"></a-circle>
+           <a-circle src="#icon-penguin" radius="0.1" position="-0.5 -0.5 0.01"></a-circle>
+           <a-circle src="#icon-sheep" radius="0.1" position="-0.3 0.5 0.01"></a-circle>
+           <a-circle src="#icon-sheep" radius="0.1" position="-0.1 0.5 0.01"></a-circle>
+           <a-circle src="#icon-penguin" radius="0.1" position="0.3 -0.5 0.01"></a-circle>
+        </a-entity>
+
+
+        <a-box id="box" position="-1 2 -3" rotation="0 45 45" color="#4CC3D9" shadow>
+        </a-box><!-- 四角オブジェクト -->
+
+      </a-entity>
+        <a-light type="ambient" color="#FFFFFF"></a-light>
+        <a-light type="point" color="#FFFFFF" distance="100" intensity="0.2" position="0 5 5" rotation="45 45 0"></a-light>
+        <a-light type="directional" color="#FFFFFF" intensity="0.4" position="0 5 5" rotation="45 45 0"></a-light>
+    </a-scene>
+  </body>
+</html>
